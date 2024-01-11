@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .models import Message, Chat
 
@@ -10,3 +11,13 @@ def index(request):
 
     chatMessages = Message.objects.filter(chat__id=1)
     return render(request, 'chat/index.html', {"messages": chatMessages})
+
+def login(request):
+    if request.method == "POST":
+        print("login", request.POST["username"], request.POST["password"])
+        user = ""
+        if user: 
+            return HttpResponseRedirect(redirect_to='/chat/')
+        else:
+            return render(request, 'chat/login.html', {"wrongPassword": True}) 
+    return render(request, 'chat/login.html')

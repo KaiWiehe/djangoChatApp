@@ -13,7 +13,11 @@
         <div class="mdl-layout__header-row">
             <!-- Title -->
             <span class="mdl-layout-title">
+                {% if request.user.is_authenticated %}
                 Herzlich wilkommen, {{ request.user.first_name }}
+                {% else %}
+                Herzlich willkommen, bitte logge dich ein!
+                {% endif %}
             </span>
             <!-- Add spacer, to align navigation to the right -->
             <div class="mdl-layout-spacer"></div>
@@ -37,6 +41,9 @@
     </div>
     <main class="mdl-layout__content">
         <div class="page-content">
+
+            {% if request.user.is_authenticated %}
+
             <form action="/chat/" method="POST">
                 {% csrf_token %}
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -54,7 +61,15 @@
                 [{{ message.created_at }}] {{message.author.first_name}}: {{ message.text }}
             </div>
 
-            {%endfor %}
+            {% endfor %}
+
+            {% else %}
+
+            <h1>Du bist nicht eingeloggt!</h1>
+            <p>Bitte logge dich ein. <br></p>
+            <p>Bitte klicke hier: <a href="/login">Login</a> </p>
+
+            {% endif %}
 
         </div>
     </main>
