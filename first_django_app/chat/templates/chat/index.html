@@ -1,30 +1,39 @@
-{% extends "base.html" %}
-{% block content %}
-{% if request.user.is_authenticated%}
+{% extends "base.html" %} {% block content %} {% if request.user.is_authenticated%}
 
-<form action="/chat/" method="POST">
+<script>
+  async function sendMsg() {
+    let fd = new FormData()
+    fd.append('textmessage', msg.value)
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+    try {
+      await fetch('/chat/', {
+        method: 'POST',
+        body: fd,
+      })
+      console.log('erfolgreich')
+    } catch (err) {
+      console.log(err)
+    }
+  }
+</script>
+
+<form onsubmit="sendMsg(); return false" method="POST">
   {% csrf_token %}
   <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    <input class="mdl-textfield__input" type="text" id="sample3" name="textmessage" />
-    <label class="mdl-textfield__label" for="sample3">Text...</label>
+    <input class="mdl-textfield__input" type="text" id="msg" name="textmessage" />
+    <label class="mdl-textfield__label" for="msg">Text...</label>
   </div>
-  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-    Send
-  </button>
+  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Send</button>
 </form>
 
 {% for message in messages %}
 
-<div>
-  [{{ message.created_at }}] {{message.author.first_name}}: {{ message.text }}
-</div>
+<div>[{{ message.created_at }}] {{message.author.first_name}}: {{ message.text }}</div>
 
-{% endfor %}
-{% else %}
+{% endfor %} {% else %}
 
 <h1>Du bist nicht eingeloggt!</h1>
 <p>Bitte logge dich ein. <br /></p>
 <p>Bitte klicke hier: <a href="/login">Login</a></p>
 
-{% endif %}
-{% endblock %}
+{% endif %} {% endblock %}
